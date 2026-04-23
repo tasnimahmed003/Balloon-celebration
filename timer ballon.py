@@ -13,9 +13,9 @@ col1, col2, col3 = st.columns([1, 1.5, 1])
 with col2:
     try:
         # Ekhane tumi je name-ti diyechile sheta boshiye dewa holo
-        st.image("PhotoRoom-20250120_181402-03-01.jpg", width=350, caption="Develop By Tasnim", use_container_width=True)
+        st.image("PhotoRoom-20250120_181402-03-01.jpeg", width=350, caption="Develop By Tasnim", use_container_width=True)
     except:
-        st.info("GitHub-e chobi-ti (PhotoRoom-20250120_181402-03-01.jpg) upload korun.")
+        st.info("GitHub-e chobi-ti (PhotoRoom-20250120_181402-03-01.jpeg) upload korun.")
 
 st.write("---")
 
