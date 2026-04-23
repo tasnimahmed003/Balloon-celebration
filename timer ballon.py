@@ -1,22 +1,38 @@
 import streamlit as st
 import time
 
-# পেজের টাইটেল এবং ডিজাইন
-st.set_page_config(page_title="Tasnim's Surprise", page_icon="🎈")
+# 1. Page Setup
+st.set_page_config(page_title="Tasnim's Portfolio", page_icon="🎈", layout="wide")
 
-st.title("🎈 Tasnim's Special Python Project")
-st.write("Enter the time and watch the magic happen!")
+# 2. Name and Identity
+st.markdown("<h1 style='text-align: center; color: #4CAF50;'>MD TASNIM</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 20px;'>Student of Computer Science and Technology</p>", unsafe_allow_html=True)
 
-# ইউজার থেকে ইনপুট নেওয়া
-seconds = st.number_input("Enter seconds (e.g., 20):", min_value=1, value=20)
+# 3. Profile Picture Section (Tomar chobir name boshiye dewa hoyeche)
+col1, col2, col3 = st.columns([1, 1.5, 1])
+with col2:
+    try:
+        # Ekhane tumi je name-ti diyechile sheta boshiye dewa holo
+        st.image("PhotoRoom-20250120_181402-03-01.jpg", width=350, caption="Develop By Tasnim", use_container_width=True)
+    except:
+        st.info("GitHub-e chobi-ti (PhotoRoom-20250120_181402-03-01.jpg) upload korun.")
 
-if st.button("Start Celebration"):
-    st.write(f"Wait for it... The celebration will last for {seconds} seconds!")
+st.write("---")
 
-    # ২০ সেকেন্ড (বা তোমার দেওয়া সময়) ধরে বেলুন ওড়ানোর লজিক
+# 4. Multi-Celebration Timer
+st.subheader("🎉 Multi-Celebration Magic (Balloons + Snow)")
+seconds = st.number_input("Koto second celebration cholbe?", min_value=1, max_value=60, value=20)
+
+# 5. Celebration Logic
+if st.button("Start Grand Celebration 🚀"):
+    st.balloons()
+    st.success(f"Celebration shuru hoyeche! It will last for {seconds} seconds.")
+    
     start_time = time.time()
     while time.time() - start_time < seconds:
-        st.balloons() # এই কমান্ডটি স্ক্রিনে বেলুন ওড়াবে
-        time.sleep(1) # প্রতি ১ সেকেন্ড পরপর নতুন করে বেলুন উড়বে
-
-    st.success("Hope you enjoyed the celebration! 🎈")
+        st.balloons() # Balloon urbe
+        st.snow()     # Tusharpat hobe
+        time.sleep(1)
+    
+    st.balloons()
+    st.write("Magic shesh! Dhonnobad.")
