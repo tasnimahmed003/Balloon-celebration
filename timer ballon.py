@@ -5,7 +5,7 @@ import time
 st.set_page_config(page_title="Tasnim's Portfolio", page_icon="🎈", layout="wide")
 
 # 2. Name and Identity
-st.markdown("<h1 style='text-align: center; color: #4CAF50;'>MD TASNIM</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #4CAF50;'>TASNIM AHMAD</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; font-size: 20px;'>Student of Computer Science and Technology</p>", unsafe_allow_html=True)
 
 # 3. Profile Picture Section (Tomar chobir name boshiye dewa hoyeche)
