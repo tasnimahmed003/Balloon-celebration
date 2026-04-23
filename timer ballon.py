@@ -15,7 +15,7 @@ with col2:
         # Ekhane tumi je name-ti diyechile sheta boshiye dewa holo
         st.image("PhotoRoom-20250120_181402-03-01.jpeg", width=350, caption="Develop By Tasnim", use_container_width=True)
     except:
-        st.info("GitHub-e chobi-ti (PhotoRoom-20250120_181402-03-01.jpeg) upload korun.")
+        st.info("PhotoRoom-20250120_181402-03-01.jpeg")
 
 st.write("---")
 
