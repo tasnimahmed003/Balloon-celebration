@@ -2,14 +2,13 @@ import streamlit as st
 import requests
 from duckduckgo_search import DDGS
 
-# ১. ক্লিন ও প্রফেশনাল ডিজাইন
+# ১. ক্লিন ও প্রফেশনাল ডিজাইন (ব্যানার ও টাইটেল)
 st.set_page_config(page_title="Tasnim's AI", layout="centered")
 
 st.markdown("""
     <style>
     .stApp { background: #0e1117; }
     
-    /* হেডার সেকশন */
     .header-container {
         text-align: center;
         background: rgba(255, 165, 0, 0.08); 
@@ -36,7 +35,6 @@ st.markdown("""
         margin-top: 10px;
     }
 
-    /* চ্যাট বাবল ডিজাইন */
     [data-testid="stChatMessage"] { 
         background: rgba(255, 255, 255, 0.04) !important; 
         border-radius: 15px !important; 
@@ -48,11 +46,11 @@ st.markdown("""
     
     <div class="header-container">
         <div class="name-title">TASNIM AHMED</div>
-        <div class="made-by">আমি তাসনিমের তৈরি এআই চ্যাটবট</div>
+        <div class="made-by">এটি তাসনিমের তৈরি একটি এআই চ্যাটবট</div>
     </div>
     """, unsafe_allow_html=True)
 
-# ২. রিসার্চ ফাংশন (পর্দার আড়ালে কাজ করবে)
+# ২. রিসার্চ ফাংশন
 def internet_research(query):
     try:
         with DDGS() as ddgs:
@@ -74,10 +72,10 @@ def get_ai_response(history):
     system_prompt = f"""
     তুমি তাসনিম আহমেদের তৈরি এআই।
     ১. প্রতিবার উত্তরের শুরুতে বলবে: 'আসসালামু আলাইকুম! হাই, আমি তাসনিমের তৈরি চ্যাটবট। তোমাকে কীভাবে সাহায্য করতে পারি?'
-    ২. এরপর অত্যন্ত বুদ্ধিমত্তার সাথে সরাসরি প্রশ্নের উত্তর দিবে।
-    ৩. তোমার কাছে থাকা এই ইন্টারনেট তথ্য ব্যবহার করো: {search_context}
+    ২. প্রশ্নের সরাসরি উত্তর দিবে।
+    ৩. ইন্টারনেট তথ্য: {search_context}
     ৪. কোনো বাড়তি কথা বা অপ্রাসঙ্গিক কথা বলবে না। 
-    ৫. একদম মানুষের মতো স্বাভাবিক ও প্রফেশনাল বাংলা ব্যবহার করো।
+    ৫. প্রফেশনাল বাংলা ব্যবহার করো।
     """
     
     data = {
@@ -90,7 +88,7 @@ def get_ai_response(history):
         response = requests.post(url, headers=headers, json=data, timeout=20)
         return response.json()['choices'][0]['message']['content']
     except:
-        return "দুঃখিত, আমি এখন উত্তর দিতে পারছি না। আবার চেষ্টা করো।"
+        return "দুঃখিত, আমি এখন উত্তর দিতে পারছি না।"
 
 # ৪. চ্যাট ইন্টারফেস
 if "messages" not in st.session_state:
@@ -100,8 +98,8 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
-# ৫. চ্যাট বক্সের টেক্সট এখন ক্লিন (Message Tasnim AI)
-if prompt := st.chat_input("Message Tasnim AI"):
+# ৫. চ্যাট বক্সের টেক্সট এখন প্রফেশনাল (Ask Tasnim AI...)
+if prompt := st.chat_input("Ask Tasnim AI..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.write(prompt)
