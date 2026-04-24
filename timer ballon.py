@@ -1,61 +1,89 @@
-import difflib
+import streamlit as st
+import requests
+from duckduckgo_search import DDGS
 
-def get_chatbot_response():
-    # FAQ ডাটাবেস: এখানে বাংলা এবং ইংরেজি উভয় ভার্সন রাখা হয়েছে
-    faq_database = {
-        # Greetings - English
-        "hi": "Hello! How can I assist you?",
-        "hello": "Hi there! What can I do for you?",
-        "how are you": "I am a bot, but I am doing great! How about you?",
-        "who created you": "I was created using Python programming.",
-        
-        # Greetings - Bangla
-        "হাই": "হ্যালো! আমি আপনাকে কীভাবে সাহায্য করতে পারি?",
-        "কেমন আছো": "আমি ভালো আছি, আপনি কেমন আছেন?",
-        "তোমার নাম কি": "আমি একটি পাইথন চ্যাটবট।",
-        "কে তোমাকে বানিয়েছে": "আমাকে পাইথন প্রোগ্রামিং দিয়ে তৈরি করা হয়েছে।",
+# ১. ডিজাইন সেটআপ
+st.set_page_config(page_title="Tasnim's AI", layout="centered")
 
-        # Programming & Tech - English
-        "what is python": "Python is a versatile and easy-to-learn programming language.",
-        "what is a variable": "A variable is a container for storing data values.",
-        "what is html": "HTML is the standard markup language for creating web pages.",
-        
-        # Programming & Tech - Bangla
-        "পাইথন কি": "পাইথন একটি বহুমুখী এবং সহজে শেখা যায় এমন প্রোগ্রামিং ল্যাঙ্গুয়েজ।",
-        "ভ্যারিয়েবল কি": "ভ্যারিয়েবল হলো ডেটা জমা রাখার একটি পাত্র বা কন্টেইনার।",
-        "কম্পিউটার কি": "কম্পিউটার একটি ইলেকট্রনিক যন্ত্র যা তথ্য প্রক্রিয়াকরণ করে।",
-
-        # General Knowledge - English
-        "capital of bangladesh": "The capital of Bangladesh is Dhaka.",
-        "largest river in bangladesh": "The Padma, Meghna, and Jamuna are the major rivers.",
-        
-        # General Knowledge - Bangla
-        "বাংলাদেশের রাজধানী কি": "বাংলাদেশের রাজধানী হলো ঢাকা।",
-        "সূর্য কোন দিকে ওঠে": "সূর্য পূর্ব দিকে ওঠে।",
-        
-        # Add more up to 500 in this pattern...
+st.markdown("""
+    <style>
+    .stApp { background: #0e1117; }
+    .header-container {
+        text-align: center;
+        background: rgba(255, 165, 0, 0.1); 
+        backdrop-filter: blur(20px);
+        padding: 30px; border-radius: 20px;
+        border: 1px solid rgba(255, 165, 0, 0.3);
+        margin-bottom: 35px;
     }
+    .name-title { color: #ffa500; font-size: 30px; font-weight: 800; text-transform: uppercase; margin: 0; }
+    .made-by { color: #ffffff; font-size: 15px; opacity: 0.8; margin-top: 10px; }
+    [data-testid="stChatMessage"] { background: rgba(255, 255, 255, 0.05) !important; border-radius: 15px !important; }
+    header, footer {visibility: hidden;}
+    </style>
+    
+    <div class="header-container">
+        <div class="name-title">TASNIM AHMED</div>
+        <div class="made-by">আমি তাসনিমের তৈরি এআই চ্যাটবট</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    print("--- Multi-Language FAQ Bot ---")
-    print("Type your question (English or Bangla). Type 'exit' to stop.")
+# ২. ইন্টারনেট রিসার্চ ফাংশন
+def internet_search(query):
+    try:
+        with DDGS() as ddgs:
+            results = [r['body'] for r in ddgs.text(query, max_results=3)]
+            return "\n".join(results)
+    except:
+        return ""
 
-    while True:
-        user_input = input("\nYou: ").strip().lower()
+# ৩. এআই প্রসেসিং
+API_KEY = "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"
 
-        if user_input == 'exit' or user_input == 'বন্ধ':
-            print("Chatbot: Goodbye! / বিদায়!")
-            break
+def get_ai_response(history):
+    user_input = history[-1]["content"]
+    search_data = internet_search(user_input)
+    
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
+    
+    # প্রফেশনাল ইনস্ট্রাকশন
+    system_prompt = f"""
+    তুমি তাসনিম আহমেদের তৈরি এআই। তোমার নাম 'Tasnim's AI'। 
+    ১. কেউ মেসেজ দিলে শুরুতেই বলবে: 'আসসালামু আলাইকুম! হাই, আমি তাসনিমের তৈরি চ্যাটবট। তোমাকে কীভাবে সাহায্য করতে পারি?'
+    ২. এরপর ব্যবহারকারীর প্রশ্নের সঠিক উত্তর দিবে।
+    ৩. ইন্টারনেটের লেটেস্ট তথ্য এখানে আছে: {search_data}
+    ৪. উল্টাপাল্টা বা অপ্রাসঙ্গিক কথা বলবে না। একদম টু-দ্য-পয়েন্ট এবং প্রফেশনাল উত্তর দিবে।
+    ৫. সুন্দর সাবলীল বাংলা ব্যবহার করবে।
+    """
+    
+    data = {
+        "model": "llama-3.1-8b-instant",
+        "messages": [{"role": "system", "content": system_prompt}] + history,
+        "temperature": 0.5
+    }
+    
+    try:
+        response = requests.post(url, headers=headers, json=data, timeout=15)
+        return response.json()['choices'][0]['message']['content']
+    except:
+        return "দুঃখিত, আমি এখন উত্তর দিতে পারছি না। আবার চেষ্টা করো।"
 
-        # প্রশ্নের মিল খোঁজা (Similarity Check)
-        questions = list(faq_database.keys())
-        matches = difflib.get_close_matches(user_input, questions, n=1, cutoff=0.4)
+# ৪. চ্যাট ইন্টারফেস
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-        if matches:
-            best_match = matches[0]
-            print(f"Chatbot: {faq_database[best_match]}")
-        else:
-            # যদি উত্তর না পাওয়া যায়
-            print("Chatbot: Sorry, I don't know the answer to that. / দুঃখিত, আমি এর উত্তর জানি না।")
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
 
-if __name__ == "__main__":
-    get_chatbot_response()
+if prompt := st.chat_input("যেকোনো কিছু জিজ্ঞেস করো..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.write(prompt)
+
+    with st.chat_message("assistant"):
+        with st.spinner("রিসার্চ করছি..."):
+            response = get_ai_response(st.session_state.messages)
+            st.write(response)
+            st.session_state.messages.append({"role": "assistant", "content": response})
